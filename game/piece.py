@@ -37,7 +37,7 @@ class Piece:
             if board.grid[self.x + 1][self.y + m] != 0 and board.grid[self.x + 1][self.y + m].color != self.color:
                 plm.append(Move(self.x, self.y, 1, m))
         if board.grid[self.x][self.y + m] == 0:
-            if self.y == 6:
+            if self.y == (6 if self.color == Color.WHITE else 1):
                 plm.append(Move(self.x, self.y, 0, m, isPromotion=True, promoteTo=PType.QUEEN))
                 plm.append(Move(self.x, self.y, 0, m, isPromotion=True, promoteTo=PType.KNIGHT))
                 plm.append(Move(self.x, self.y, 0, m, isPromotion=True, promoteTo=PType.ROOK))

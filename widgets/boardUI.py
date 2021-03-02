@@ -53,15 +53,18 @@ class QBoardWidget(QtWidgets.QWidget):
         # Play Move
         elif self.mode == Mode.PLAY:
             if self.drawPromotionDialog:
+                if self.selected.color == Color.BLACK:
+                    self.tp[1] = 7 - self.tp[1]
                 if self.tp[0] == self.selected.x and self.tp[1] < 4:
+                    m = 1 if self.selected.color == Color.WHITE else - 1
                     if self.tp[1] == 0:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, 1, isPromotion=True, promoteTo=PType.QUEEN))
+                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.QUEEN))
                     elif self.tp[1] == 1:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, 1, isPromotion=True, promoteTo=PType.ROOK))
+                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.ROOK))
                     elif self.tp[1] == 2:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, 1, isPromotion=True, promoteTo=PType.KNIGHT))
+                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.KNIGHT))
                     elif self.tp[1] == 3:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, 1, isPromotion=True, promoteTo=PType.BISHOP))
+                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.BISHOP))
                     self.selected = 0
                     self.board.turn = Color(self.board.turn.value + 1 if self.board.turn.value + 1 < len(Color) else 0)
                     self.drawPromotionDialog = False
