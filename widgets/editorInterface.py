@@ -4,22 +4,24 @@ from game.player import Player
 from game.enums import Color, renderSources, Move
 from math import floor
 
-class QEditorWidget(QtWidgets.QWidget):
+class QEditorWidget(QtWidgets.QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
         self.setMaximumSize(10000, 10000)
         policy = QtWidgets.QSizePolicy()
-        policy.setHorizontalStretch(0)
+        policy.setHorizontalStretch(1)
+        policy.setVerticalStretch(1)
         self.setSizePolicy(policy)
         self.lightBrush = QtGui.QBrush(QtGui.QColor(25, 25, 25))
         self.noBrush =  QtGui.QBrush(QtGui.QColor(0, 0, 0, 0))
         self.selected = [0, 0]
+        self.setScaledContents(True)
         #self.show()
 
     def resizeEvent(self, e):
-        self.resize(self.parent.width() - self.parent.height() - 20, int((self.parent.width() - self.parent.height() - 20) / 3.5))
-        self.move(self.parent.height() +20, self.parent.height() - self.height() + 10)
+        self.resize(self.width(), int(self.width() / 3))
+        self.move(10, self.parent.height() - self.height() +10)
         self.update()
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:

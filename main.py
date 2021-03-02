@@ -1,13 +1,15 @@
-from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore
 import sys, signal
 from engine.engineMain import Engine
 
 from game.player import Player
-from game.enums import Color
+from game.enums import Color, Mode
 from game.board import Board
 
-from editorInterface import QEditorWidget
-from boardUI import QBoardWidget
+from widgets.editorInterface import QEditorWidget
+from widgets.boardUI import QBoardWidget
+from widgets.modeBox import QGamemodeWidget
+from sidebarUI import QSideBarWidget
 
 class MainWindow(QtWidgets.QMainWindow):
     # Create settings for the software
@@ -23,30 +25,37 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout = QtWidgets.QHBoxLayout()
         self.newWidget.setLayout(self.layout)
         self.layout.setContentsMargins(0, 0, 0, 0)
+        self.sidebarWidget = QSideBarWidget(self)
         self.sidebar = QtWidgets.QVBoxLayout()
+        self.sidebarWidget.setLayout(self.sidebar)
 
         self.players = [Player("White", Color.WHITE), Player("Black", Color.BLACK)]
         self.board = Board(self.players[0].pieces + self.players[1].pieces)
-        self.engine = Engine(self.players, self.board)
+        self.engine = Engine(self.players, self.board, self)
 
 
         self.boardUI = QBoardWidget(self.board, self)
         self.layout.addWidget(self.boardUI)
-        self.layout.addLayout(self.sidebar)
+        self.layout.addWidget(self.sidebarWidget)
         self.setCentralWidget(self.newWidget)
 
         self.calcButton = QtWidgets.QPushButton("Calculate")
         self.sidebar.addWidget(self.calcButton)
         self.calcButton.clicked.connect(self.engine.calculate)
 
-        plm = self.engine.calculate()
-        self.boardUI.possibleMoves = plm
-        self.boardUI.update()
+        # Set up mode buttons
+        self.modeBox = QGamemodeWidget(self.boardUI, self)
+        self.sidebar.addWidget(self.modeBox)
 
-        self.sidebar.addWidget(QtWidgets.QPushButton("TEST2"))
+        self.moveLabel = QtWidgets.QLabel("Move amount: ")
+        self.sidebar.addWidget(self.moveLabel)
         self.editor = QEditorWidget(self)
         self.sidebar.addWidget(self.editor)
         self.setStyleSheet("background-color: rgb(16, 16, 16); color: #dde")
+
+        plm = self.engine.calculate()
+        self.boardUI.possibleMoves = plm
+        self.boardUI.update()
 
         # Set the MainWindow Title
         self.setWindowTitle('name of the software - ' + self.version)

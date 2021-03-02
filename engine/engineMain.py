@@ -2,7 +2,8 @@ from game.player import Player
 from game.enums import Color
 
 class Engine:
-    def __init__(self, players, board):
+    def __init__(self, players, board, parent=None):
+        self.parent = parent
         self.board = board
 
     def calculate(self):
@@ -12,4 +13,5 @@ class Engine:
                 pieceMoves =  piece.generatePseudoLegalMoves(self.board)
                 for move in pieceMoves:
                     plm.append(move)
+        self.parent.moveLabel.setText("Move amount: " + str(len(plm)))
         return plm
