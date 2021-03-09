@@ -35,71 +35,83 @@ class QBoardWidget(QtWidgets.QWidget):
         #self.setMinimumWidth(self.height())
         self.update()
 
+    def test1(self):
+        pass
+
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
         h = self.size().height() - 20
         s = h / 8
         self.tp[0] = floor((event.x() - 10) / s)
         self.tp[1] = floor((event.y() - 10) / s)
-        if self.mode == Mode.PLACE:
-            s = self.parent.editor.selected
-            if s[0] == 6:
-                if self.board.grid[self.tp[0]][7 - self.tp[1]] == self.selected:
-                    self.selected = 0
-                self.board.removePiece([self.tp[0], 7 - self.tp[1]])
-            else:
-                newPiece = Piece(PType(s[0]), self.tp[0], 7 - self.tp[1], Color(s[1]))
-                self.board.pieces.append(newPiece)
-                self.board.updateBoard()
-        # Play Move
-        elif self.mode == Mode.PLAY:
-            if self.drawPromotionDialog:
-                if self.selected.color == Color.BLACK:
-                    self.tp[1] = 7 - self.tp[1]
-                if self.tp[0] == self.selected.x and self.tp[1] < 4:
-                    m = 1 if self.selected.color == Color.WHITE else - 1
-                    if self.tp[1] == 0:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.QUEEN))
-                    elif self.tp[1] == 1:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.ROOK))
-                    elif self.tp[1] == 2:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.KNIGHT))
-                    elif self.tp[1] == 3:
-                        self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.BISHOP))
-                    self.selected = 0
-                    self.board.turn = Color(self.board.turn.value + 1 if self.board.turn.value + 1 < len(Color) else 0)
-                    self.drawPromotionDialog = False
-            else:
-                # Select a piece if none is selected
-                if self.selected == 0:
-                    self.selected = self.board.grid[self.tp[0]][7-self.tp[1]]
-                    if self.selected != 0 and self.selected.color != self.board.turn:
+        if event.button() == QtCore.Qt.RightButton:
+            self.selected = 0
+        else:
+            if self.mode == Mode.PLACE:
+                s = self.parent.editor.selected
+                if s[0] == 6:
+                    if self.board.grid[self.tp[0]][7 - self.tp[1]] == self.selected:
                         self.selected = 0
-                # If something is already selected
+                    self.board.removePiece([self.tp[0], 7 - self.tp[1]])
                 else:
-                    x,y = self.selected.x, self.selected.y
-                    succes = False
-                    # Generate moves and check if clicked square is legal
-                    for move in self.selected.generatePseudoLegalMoves(self.board):
-                        if self.tp[0] == x + move.dx and 7 - self.tp[1] == y + move.dy:
-                            if move.isPromotion:
-                                self.drawPromotionDialog = True
-                            else:
-                                self.parent.board.performMove(move)
-                                self.selected = 0
-                                self.board.turn = Color(self.board.turn.value + 1 if self.board.turn.value + 1 < len(Color) else 0)
-                            succes = True
-                            break
-                    if not succes:
-                        self.selected = self.board.grid[self.tp[0]][7 - self.tp[1]]
+                    newPiece = Piece(PType(s[0]), self.tp[0], 7 - self.tp[1], Color(s[1]))
+                    self.board.pieces.append(newPiece)
+                    self.board.updateBoard()
+            # Play Move
+            elif self.mode == Mode.PLAY:
+                if self.drawPromotionDialog:
+                    if self.selected.color == Color.BLACK:
+                        self.tp[1] = 7 - self.tp[1]
+                    if self.tp[0] == self.selected.x and self.tp[1] < 4:
+                        m = 1 if self.selected.color == Color.WHITE else - 1
+                        if self.tp[1] == 0:
+                            self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.QUEEN))
+                        elif self.tp[1] == 1:
+                            self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.ROOK))
+                        elif self.tp[1] == 2:
+                            self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.KNIGHT))
+                        elif self.tp[1] == 3:
+                            self.parent.board.performMove(Move(self.selected.x, self.selected.y, 0, m, isPromotion=True, promoteTo=PType.BISHOP))
+                        self.selected = 0
+                        self.board.turn = Color(self.board.turn.value + 1 if self.board.turn.value + 1 < len(Color) else 0)
+                        self.drawPromotionDialog = False
+                else:
+                    # Select a piece if none is selected
+                    if self.selected == 0:
+                        self.selected = self.board.grid[self.tp[0]][7-self.tp[1]]
                         if self.selected != 0 and self.selected.color != self.board.turn:
                             self.selected = 0
-        elif self.mode == Mode.MOVE:
-            p = self.board.pieces[0]
-            self.parent.board.performMove(Move(p.x, p.y, self.tp[0] - p.x, 7 - self.tp[1] - p.y))
-        else:
-            raise NotImplementedError("Mode not implemented?")
-        self.possibleMoves = self.parent.engine.calculate()
-        self.update()
+                        print("Clicked", self.tp[0], 7-self.tp[1])
+                    # If something is already selected
+                    else:
+                        x,y = self.selected.x, self.selected.y
+                        succes = False
+                        # Generate moves and check if clicked square is legal
+                        for move in self.selected.generatePseudoLegalMoves(self.board):
+                            if self.tp[0] == x + move.dx and 7 - self.tp[1] == y + move.dy:
+                                if move.isPromotion:
+                                    self.drawPromotionDialog = True
+                                else:
+                                    self.parent.board.performMove(move)
+                                    self.selected = 0
+                                    self.board.turn = Color(self.board.turn.value + 1 if self.board.turn.value + 1 < len(Color) else 0)
+                                succes = True
+                                break
+                        if not succes:
+                            self.selected = self.board.grid[self.tp[0]][7 - self.tp[1]]
+                            if self.selected != 0 and self.selected.color != self.board.turn:
+                                self.selected = 0
+            elif self.mode == Mode.MOVE:
+                # Select a piece if none is selected
+                if self.selected == 0:
+                    self.selected = self.board.grid[self.tp[0]][7 - self.tp[1]]
+                    print("Clicked", self.tp[0], 7 - self.tp[1])
+                else:
+                    p = self.selected
+                    self.parent.board.performMove(Move(p.x, p.y, self.tp[0] - p.x, 7 - self.tp[1] - p.y))
+            else:
+                raise NotImplementedError("Mode not implemented?")
+            self.possibleMoves = self.parent.engine.calculate()
+            self.update()
 
     def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
         qp = QtGui.QPainter()
@@ -139,6 +151,16 @@ class QBoardWidget(QtWidgets.QWidget):
                 x = move.x + move.dx
                 y = move.y + move.dy
                 qp.drawEllipse(s*x + 10 + 15/sp, (7-y) * s + 10 + 15/sp, 30/sp, 30/sp)
+
+        if self.mode == Mode.PLAY:
+            qp.setBrush(QtGui.QBrush(QtGui.QColor(255, 32, 32, 128)))
+            for move in self.parent.engine.calcPins():
+                qp.drawRect(s * move[0] + 9, s * (7-move[1]) + 9, s+1, s+1)
+            qp.setBrush(QtGui.QBrush(QtGui.QColor(200, 150, 64, 200)))
+            squares = self.parent.engine.calcCheckDefenseSquares()
+            self.board.checkStopSquares = squares
+            for move in squares:
+                qp.drawRect(s * move[0] + 9, s * (7 - move[1]) + 9, s + 1, s + 1)
 
         if self.drawPromotionDialog:
             qp.setBrush(QtGui.QBrush(QtGui.QColor(0,0,0,128)))

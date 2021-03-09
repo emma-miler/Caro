@@ -19,6 +19,12 @@ class Mode(Enum):
     PLACE = 1
     MOVE = 2
 
+class Direction(Enum):
+    HORIZONTAL = 0
+    VERTICAL = 1
+    DIAGONALRIGHT = 2
+    DIAGONALLEFT = 3
+
 renderSources = [
     QRectF(0.0, 0.0, 150.0, 150.0),
     QRectF(150.0, 0.0, 150.0, 150.0),

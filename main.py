@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 import sys, signal
 from engine.engineMain import Engine
 
@@ -13,9 +13,9 @@ from sidebarUI import QSideBarWidget
 
 class MainWindow(QtWidgets.QMainWindow):
     # Create settings for the software
-    settings = QtCore.QSettings('Your Name', 'Name of the software')
+    settings = QtCore.QSettings('Emma Miller', 'Caro')
     settings.setFallbacksEnabled(False)
-    version = 'Your version'
+    version = 'Alpha 0.1'
 
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
@@ -43,6 +43,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sidebar.addWidget(self.calcButton)
         self.calcButton.clicked.connect(self.engine.calculate)
 
+        self.moveList = QtWidgets.QTableView()
+        self.moveList.setStyleSheet("background-color:black")
+        self.moveModel = QtGui.QStandardItemModel()
+        self.moveList.setModel(self.moveModel)
+        self.moveModel.insertColumns(0, 2)
+        self.moveModel.insertRows(0, 20546)
+        self.moveModel.setData(self.moveModel.index(0,0), "test")
+
+        self.sidebar.addWidget(self.moveList)
+
+
         # Set up mode buttons
         self.modeBox = QGamemodeWidget(self.boardUI, self)
         self.sidebar.addWidget(self.modeBox)
@@ -53,12 +64,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sidebar.addWidget(self.editor)
         self.setStyleSheet("background-color: rgb(16, 16, 16); color: #dde")
 
+        self.test = QtWidgets.QPushButton("Debug")
+        self.layout.addWidget(self.test)
+        self.test.clicked.connect(self.engine.calcCheckDefenseSquares)
+
         plm = self.engine.calculate()
         self.boardUI.possibleMoves = plm
         self.boardUI.update()
 
         # Set the MainWindow Title
-        self.setWindowTitle('name of the software - ' + self.version)
+        self.setWindowTitle('Caro - ' + self.version)
         # When the software are closed on console the software are closed
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         # Show the form

@@ -4,6 +4,8 @@ class Board:
     def __init__(self, pieces, turn=Color.WHITE):
         self.pieces = pieces
         self.turn = turn
+        self.checks = [False, False]
+        self.checkStopSquares = []
         self.moveList = [Move]
         self.updateBoard()
 
