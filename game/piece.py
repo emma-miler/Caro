@@ -51,6 +51,9 @@ class Piece:
                     for square in board.checkStopSquares:
                         if square[0] == x and square[1] == y:
                             checkStop.append(move)
+                    for checkingPiece in board.checkPieces:
+                        if checkingPiece[0] == x and checkingPiece[1] == y:
+                            checkStop.append(move)
                 return checkStop
             else:
                 return plm
@@ -191,26 +194,27 @@ class Piece:
                         break
 
     def calcKnight(self, plm, board):
+        #TODO: fix this shit
         if self.x > 1:
             if self.y + 1 <= 7 and (board.grid[self.x - 2][self.y + 1] == 0 or board.grid[self.x - 2][self.y + 1].color != self.color):
                 plm.append(Move(self.x, self.y, -2, 1))
             if self.y - 1 >= 0 and (board.grid[self.x - 2][self.y - 1] == 0 or board.grid[self.x - 2][self.y - 1].color != self.color):
-                plm.append(Move(self.x, self.y, -2, -1, isCapture=True, captureType=board.grid[self.x - 2][self.y + 1].type))
+                plm.append(Move(self.x, self.y, -2, -1))
         if self.x > 0:
             if self.y + 2 <= 7 and (board.grid[self.x - 1][self.y + 2] == 0 or board.grid[self.x - 1][self.y + 2].color != self.color):
                 plm.append(Move(self.x, self.y, -1, 2))
             if self.y - 2 >= 0 and (board.grid[self.x - 1][self.y - 2] == 0 or board.grid[self.x - 1][self.y - 2].color != self.color):
-                plm.append(Move(self.x, self.y, -1, -2, isCapture=True, captureType=board.grid[self.x - 1][self.y - 2].type))
+                plm.append(Move(self.x, self.y, -1, -2))
         if self.x < 6:
             if self.y + 1 <= 7 and (board.grid[self.x + 2][self.y + 1] == 0 or board.grid[self.x + 2][self.y + 1].color != self.color):
                 plm.append(Move(self.x, self.y, 2, 1))
             if self.y - 1 >= 0 and (board.grid[self.x + 2][self.y - 1] == 0 or board.grid[self.x + 2][self.y - 1].color != self.color):
-                plm.append(Move(self.x, self.y, 2, -1, isCapture=True, captureType=board.grid[self.x + 2][self.y].type - 1))
+                plm.append(Move(self.x, self.y, 2, -1))
         if self.x < 7:
             if self.y + 2 <= 7 and (board.grid[self.x + 1][self.y + 2] == 0 or board.grid[self.x + 1][self.y + 2].color != self.color):
                 plm.append(Move(self.x, self.y, 1, 2))
             if self.y - 2 >= 0 and (board.grid[self.x + 1][self.y - 2] == 0 or board.grid[self.x + 1][self.y - 2].color != self.color):
-                plm.append(Move(self.x, self.y, 1, -2, isCapture=True, captureType=board.grid[self.x + 1][self.y - 2].type))
+                plm.append(Move(self.x, self.y, 1, -2))
 
     def calcKing(self, plm, board):
         # TODO: make sure king doesnt walk into check
@@ -238,6 +242,7 @@ class Piece:
                 plm.append(Move(self.x, self.y, move[0], move[1]))
 
         # Castling
+        # TODO: fix castling into/out of/through checks
         if not self.hasMoved:
             # White
             if self.color == Color.WHITE:
@@ -258,15 +263,16 @@ class Piece:
             elif self.color == Color.BLACK:
                 # Short
                 maybeRook = board.grid[7][7]
-                if maybeRook.type == PType.ROOK and maybeRook.hasMoved == False and maybeRook.color == self.color:
-                    if board.grid[5][7] == 0 and board.grid[6][7] == 0:
-                        plm.append(Move(self.x, self.y, 2, 0, isCastleShort=True))
+                if type(maybeRook) != int:
+                    if maybeRook.type == PType.ROOK and maybeRook.hasMoved == False and maybeRook.color == self.color:
+                        if board.grid[5][7] == 0 and board.grid[6][7] == 0:
+                            plm.append(Move(self.x, self.y, 2, 0, isCastleShort=True))
 
-                # Long
-                maybeRook = board.grid[0][7]
-                if maybeRook.type == PType.ROOK and maybeRook.hasMoved == False and maybeRook.color == self.color:
-                    if board.grid[1][7] == 0 and board.grid[2][7] == 0 and board.grid[3][7] == 0:
-                        plm.append(Move(self.x, self.y, -2, 0, isCastleLong=True))
+                    # Long
+                    maybeRook = board.grid[0][7]
+                    if maybeRook.type == PType.ROOK and maybeRook.hasMoved == False and maybeRook.color == self.color:
+                        if board.grid[1][7] == 0 and board.grid[2][7] == 0 and board.grid[3][7] == 0:
+                            plm.append(Move(self.x, self.y, -2, 0, isCastleLong=True))
 
     def calcRookPin(self, pinnedSquares, board):
         n = 7 - self.x

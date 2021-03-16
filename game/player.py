@@ -25,10 +25,6 @@ class Player:
                     Piece(PType.KNIGHT, 6, 0, Color.WHITE),
                     Piece(PType.ROOK, 7, 0, Color.WHITE),
                 ]
-                self.pieces = [
-                    Piece(PType.KING, 3, 0, Color.WHITE),
-                    Piece(PType.BISHOP, 2, 0, Color.WHITE),
-                ]
 
             else:
                 #self.pieces = []
@@ -49,10 +45,6 @@ class Player:
                     Piece(PType.BISHOP, 5, 7, Color.BLACK),
                     Piece(PType.KNIGHT, 6, 7, Color.BLACK),
                     Piece(PType.ROOK, 7, 7, Color.BLACK),
-                ]
-                self.pieces = [
-                    Piece(PType.QUEEN, 3, 5, Color.BLACK),
-                    Piece(PType.QUEEN, 0, 3, Color.BLACK),
                 ]
         else:
             self.pieces = pieces

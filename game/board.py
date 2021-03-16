@@ -5,6 +5,7 @@ class Board:
         self.pieces = pieces
         self.turn = turn
         self.checks = [False, False]
+        self.checkPieces = []
         self.checkStopSquares = []
         self.moveList = [Move]
         self.updateBoard()

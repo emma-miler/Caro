@@ -80,6 +80,7 @@ class Engine:
                 for x in test:
                     for move in x:
                         defenseSquares.append(move)
+                self.board.checkPieces = checks
                 print("defense", defenseSquares)
                 return defenseSquares
 

@@ -45,6 +45,7 @@ class QBoardWidget(QtWidgets.QWidget):
         self.tp[1] = floor((event.y() - 10) / s)
         if event.button() == QtCore.Qt.RightButton:
             self.selected = 0
+            self.update()
         else:
             if self.mode == Mode.PLACE:
                 s = self.parent.editor.selected
